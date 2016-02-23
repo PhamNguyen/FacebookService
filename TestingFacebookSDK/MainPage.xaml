@@ -1,0 +1,119 @@
+﻿<phone:PhoneApplicationPage x:Class="TestingFacebookSDK.MainPage"
+                            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                            xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+                            xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+                            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                            mc:Ignorable="d"
+                            xmlns:test="clr-namespace:TesttingFacebookSDKInLibrary;assembly=TesttingFacebookSDKInLibrary"
+                            FontFamily="{StaticResource PhoneFontFamilyNormal}"
+                            FontSize="{StaticResource PhoneFontSizeNormal}"
+                            Foreground="{StaticResource PhoneForegroundBrush}"
+                            SupportedOrientations="Portrait"
+                            Orientation="Portrait"
+                            shell:SystemTray.IsVisible="False">
+    <!--LayoutRoot is the root grid where all page content is placed-->
+    <Grid>
+        <Image Source="/Assets/i_2_mid_onboading_4_bkg.png"
+               Stretch="Fill" />
+        <phone:Pivot>
+            <phone:PivotItem Header="InApp">
+                <StackPanel x:Name="LayoutRoot"
+                            Background="Transparent"
+                            VerticalAlignment="Center">
+                    <Button Content="GotoPage1"
+                            Tap="GotoPage1_tapped" />
+                    <Button Content="Login Facebook"
+                            Tap="LoginButton_Tap"
+                            VerticalAlignment="Center" />
+                    <Button Content="Logout Facebook"
+                            Tap="LogoutButton_Tap"
+                            VerticalAlignment="Center" />
+                    <Button Content="Feed Facebook"
+                            Tap="FeedButton_Tap"
+                            VerticalAlignment="Center" />
+                    <Button Content="Get Friends"
+                            Tap="GetFriendsButton_Tap"
+                            VerticalAlignment="Center" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="ObjectIdToLike"
+                                 Text="970530703035390"/>
+                        <Button Content="Like" Grid.Column="1"
+                                Tap="LikePostButton_Tap"
+                                VerticalAlignment="Center" />
+                    </Grid>
+                    <Button Content="Get Friends List"
+                            Tap="GetFriendsListButton_Tap"
+                            VerticalAlignment="Center" />
+                    <Button Content="Like page"
+                            Tap="LikePageButton_Tap"
+                            VerticalAlignment="Center" />
+                    <Image Source="https://graph.facebook.com/v2.3/me/picture?width=100&amp;height=100&amp;access_token=CAACEdEose0cBADrKhYNnjdc2n5pGZBZCZBePjmuRHFWzkRhrBrIwF3OtfSZCeZCC4hVoZCdshb5sGxXZAZACud0QdZBlXyA7WwkdryF7RAqthmgWrEKWmGslFkZApBzwxgYm0QSaZAHDXBWzdIUYoSfJtlQx8UE9B8VI0DIjIUXfTqYotUTePxwSZCHNmDh5LkGZBc8kd4TUutnwpEgZDZD" />
+                </StackPanel>
+            </phone:PivotItem>
+            <phone:PivotItem Header="InLib">
+                <test:WindowsPhoneControl1 />
+            </phone:PivotItem>
+            <phone:PivotItem Header="Webbrowser1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button Content="Clear Cookies"
+                                Tap="ClearCookiesWeb1_Tapped" />
+                        <Button Content="Refresh"
+                                Grid.Column="1"
+                                Tap="RefreshWeb1_Tapped" />
+                    </Grid>
+                    <phone:WebBrowser x:Name="web1"
+                                      Source="https://m.facebook.com"
+                                      Grid.Row="1" />
+                </Grid>
+            </phone:PivotItem>
+            <phone:PivotItem Header="Webbrowser2">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button Content="Clear Cookies"
+                                Tap="ClearCookiesWeb2_Tapped" />
+                        <Button Content="Refresh"
+                                Grid.Column="1"
+                                Tap="RefreshWeb2_Tapped" />
+                        <Button Content="Set Cookies"
+                                Grid.Column="2"
+                                Tap="SetCookiesWeb2_Tapped" />
+                    </Grid>
+                    <phone:WebBrowser x:Name="web2"
+                                      IsScriptEnabled="True"
+                                      Navigated="web2_Navigated"
+                                      Source="https://m.facebook.com"
+                                      Grid.Row="1" />
+                </Grid>
+            </phone:PivotItem>
+            <phone:PivotItem>
+                <phone:WebBrowser>
+                    
+                </phone:WebBrowser>
+            </phone:PivotItem>
+        </phone:Pivot>
+    </Grid>
+</phone:PhoneApplicationPage>
