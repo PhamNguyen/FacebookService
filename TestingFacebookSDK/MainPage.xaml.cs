@@ -192,9 +192,9 @@ namespace TestingFacebookSDK
             await FacebookService.Instance.GetUserFriends();
         }
 
-        private async void LikePageButton_Tap(object sender, System.Windows.Input.GestureEventArgs e)
+        private void LikePageButton_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
-            await FacebookService.Instance.LikePageAsync("");
+            FacebookService.Instance.LikePage("900160633407437");
         }
     }
 }

@@ -7,7 +7,6 @@ using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using TestingFacebookSDK.Resources;
-using MoboAds.Controls;
 
 namespace TestingFacebookSDK
 {
@@ -18,11 +17,6 @@ namespace TestingFacebookSDK
         /// </summary>
         /// <returns>The root frame of the Phone Application.</returns>
         public static PhoneApplicationFrame RootFrame { get; private set; }
-        private const string AdsUnitIDPopup = "565d44920a6973074ef5a788";
-        private const string AdsUnitIDBanner = "565d44560a6973074ef5a781";
-        public static MoboAdsIntersitial MEAdsPopup;
-
-        public static bool IsShownAdsPopup;
         /// <summary>
         /// Constructor for the Application object.
         /// </summary>
@@ -59,36 +53,6 @@ namespace TestingFacebookSDK
                 // and consume battery power when the user is not using the phone.
                 PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
             }
-
-            MEAdsPopup = new MoboAdsIntersitial(AdsUnitIDPopup);
-            MEAdsPopup.AdLoaded += MEAdsPopup_AdLoaded;
-            MEAdsPopup.AdLoadingError += MEAdsPopup_AdLoadingError;
-            MEAdsPopup.CloseAd += MEAdsPopup_CloseAd;
-        }
-
-
-
-        private void MEAdsPopup_CloseAd(object sender, MoboAds.Services.Events.CloseAdEventArgs e)
-        {
-            Debug.WriteLine("MEAdsPopup_CloseAd");
-            if (IsShownAdsPopup)
-            {
-                Application.Current.Terminate();
-            }
-        }
-
-        private void MEAdsPopup_AdLoadingError(object sender, MoboAds.Services.Events.AdLoadingErrorEventArgs e)
-        {
-            Debug.WriteLine("MEAdsPopup_AdLoadingError");
-            if (IsShownAdsPopup)
-            {
-                Application.Current.Terminate();
-            }
-        }
-
-        private void MEAdsPopup_AdLoaded(object sender, MoboAds.Services.Events.AdLoadedEventArgs e)
-        {
-            Debug.WriteLine("MEAdsPopup_AdLoaded");
         }
 
         // Code to execute when the application is launching (eg, from Start)

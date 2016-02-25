@@ -84,8 +84,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Helpers\Constants.cs" />
-    <Compile Include="Helpers\StorageService.cs" />
     <Compile Include="Models\AppRequestsCompletedArgs.cs" />
+    <Compile Include="Models\FBFriends.cs" />
     <Compile Include="Models\FBPicture.cs" />
     <Compile Include="Models\FBPictureData.cs" />
     <Compile Include="Models\LikeCompletedArgs.cs" />
@@ -140,11 +140,6 @@
       <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\sl4-windowsphone71\System.Net.Http.Primitives.dll</HintPath>
       <Private>True</Private>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="likepage.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />

@@ -16,7 +16,6 @@ namespace TestingFacebookSDK
         public Page1()
         {
             InitializeComponent();
-            App.MEAdsPopup.LoadAds();
         }
 
         private async void FeedButton_Tap(object sender, System.Windows.Input.GestureEventArgs e)

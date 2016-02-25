@@ -345,10 +345,13 @@ namespace FacebookSDK
             }
         }
 
-        public async Task LikePageAsync(string pageId)
+        /// <summary>
+        /// Lưu ý: Hàm này chỉ show fanpage đó lên chứ không bắt được user có like hay không nha.
+        /// </summary>
+        /// <param name="pageId">Id của page</param>
+        public void LikePage(string pageId)
         {
-            //StorageService.SaveFilesToIsoStore();
-            webView.WebBrowser.Navigate(new Uri("likepage.html", UriKind.RelativeOrAbsolute));
+            webView.WebBrowser.Navigate(new Uri(string.Format("https://m.facebook.com/{0}", pageId), UriKind.RelativeOrAbsolute));
             webView.WebBrowser.Visibility = Visibility.Visible;
             ShowPopup();
             //            webView.WebBrowser.NavigateToString(@"<html>
