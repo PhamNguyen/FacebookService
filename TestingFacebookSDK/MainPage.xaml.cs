@@ -12,6 +12,7 @@ using Microsoft.Phone.Tasks;
 using FacebookSDK;
 using System.Text;
 using System.Diagnostics;
+using System.ComponentModel;
 
 namespace TestingFacebookSDK
 {
@@ -24,9 +25,16 @@ namespace TestingFacebookSDK
             InitializeComponent();
             cookies = new CookieCollection();
             web2.LoadCompleted += Web2_LoadCompleted;
-            FacebookService.Instance.AppId = "1405576279680868";
+            FacebookService.Instance.AppId = "981905581855079";
             FacebookService.Instance.ExtendedPermissions = "publish_actions, publish_stream, user_about_me, manage_pages, user_birthday, user_friends, user_status, user_likes, user_location, user_posts";
             FacebookService.Instance.IsPopup = true;
+            FacebookService.Instance.Closed += Instance_Closed;
+           
+        }
+
+        private void Instance_Closed(object sender, EventArgs e)
+        {
+            MessageBox.Show("Facebook SDK was closed by user!");
         }
 
         private void Web2_Navigating(object sender, NavigatingEventArgs e)
@@ -195,6 +203,13 @@ namespace TestingFacebookSDK
         private void LikePageButton_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
             FacebookService.Instance.LikePage("900160633407437");
+        }
+
+        protected override void OnBackKeyPress(CancelEventArgs e)
+        {
+            if (FacebookService.Instance.BackButtonHandler())
+                e.Cancel = true;
+            base.OnBackKeyPress(e);
         }
     }
 }

@@ -120,6 +120,11 @@ namespace FacebookSDK
             get { return webView.ButtonClose.Visibility == Visibility.Visible; }
             set { webView.ButtonClose.Visibility = value ? Visibility.Visible : Visibility.Collapsed; }
         }
+
+        /// <summary>
+        /// Sự kiện khi user bấm vào button Close để tắt FacebookSDK
+        /// </summary>
+        public event EventHandler Closed;
         #endregion
 
         #region Singleton
@@ -409,8 +414,7 @@ namespace FacebookSDK
                 return null;
             }
         }
-
-
+        
         public async Task<FBFriends> GetUserFriends()
         {
             while (AccessTokenData == null || string.IsNullOrEmpty(AccessTokenData.AccessToken))
@@ -428,9 +432,22 @@ namespace FacebookSDK
             }
             return null;
         }
-        public void CloseFacebookPopup()
+        /// <summary>
+        /// Hàm này để bên ngoài handle khi user sử dụng nút back thì sẽ tắt cái FacebookSDK đi
+        /// </summary>
+        /// <returns>
+        /// Trả về true là cho biết FacebookSDK đang được hiển thị, cần phải tắt đi.
+        /// Trả về false là cho biết FacebookSDK đã được tắt, bên ngoài không cần phải tắt nữa.
+        /// </returns>
+        public bool BackButtonHandler()
         {
-            ForceClose();
+            //Nếu FacebookSDK vẫn đang hiển thị
+            if (popup.IsOpen == true)
+            {
+                ForceClose();
+                return true;
+            }
+            return false;
         }
         #endregion
 
@@ -569,6 +586,21 @@ namespace FacebookSDK
                 }
             }
 
+            //webView.WebBrowser.InvokeScript("eval", "( function (){window.external.notify('abc');})();");
+
+            //            < script type = "text/javascript" >
+            //     window.console = {
+            //                log: function(str) { window.external.notify(str); }
+            //            };
+
+            //            // output errors to console log
+            //            window.onerror = function(e) {
+            //                console.log("window.onerror ::" + JSON.stringify(e));
+            //            };
+
+            //            console.log("WP8 WB Log Console samle");
+            //</ script >
+
             //if (!e.Uri.ToString().Contains(Contants.UriNavigateBlankPage) && !isSetCookie)
             //{
             //    if (e.Uri.ToString().Contains("https://m.facebook.com"))
@@ -590,6 +622,8 @@ namespace FacebookSDK
         private void ForceClose()
         {
             NavigateToHide();
+            if (Closed != null)
+                Closed(this, new EventArgs());
         }
 
         private void ButtonClose_Tap(object sender, System.Windows.Input.GestureEventArgs e)

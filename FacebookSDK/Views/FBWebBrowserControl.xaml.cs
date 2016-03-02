@@ -12,11 +12,16 @@
             InitializeComponent();
             WebBrowser.Navigated += WebBrowser_Navigated;
             WebBrowser.Navigating += WebBrowser_Navigating;
+            WebBrowser.ScriptNotify += WebBrowser_ScriptNotify;
             WebBrowser.NavigationFailed += WebBrowser_NavigationFailed;
             ButtonClose.Tap += ButtonClose_Tap;
             ButtonClose.MouseLeave += ButtonClose_MouseLeave;
         }
 
+        private void WebBrowser_ScriptNotify(object sender, Microsoft.Phone.Controls.NotifyEventArgs e)
+        {
+            Debug.WriteLine("WebBrowser_ScriptNotify: e.Value = " + e.Value);
+        }
 
         public void ShowLoading(bool isShow, string contentLoading = "")
         {
