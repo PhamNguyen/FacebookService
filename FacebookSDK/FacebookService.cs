@@ -249,11 +249,20 @@ namespace FacebookSDK
 
             currentState = CurrentState.FeedDialog;
 
-            feedParams.Add(PostFields.RedirectUri, Constants.RedirectUriFeed);
+            feedParams.Add(PostFields.RedirectUri, Constants.RedirectUriAppRequest);
             feedParams.Add(PostFields.AppId, AppId);
             feedParams.Add(PostFields.Display, "touch");
 
             var feedDialogUrl = facebookClient.GetDialogUrl(FacebookCommand.Feed, feedParams);
+
+            string url = "https://www.facebook.com/dialog/feed?";
+
+            foreach (var item in feedParams)
+            {
+                url += string.Format("{0}={1}", item.Key, item.Value);
+            }
+
+            //Uri feedDialogUrl = new Uri(url/*string.Format("https://www.facebook.com/dialog/feed?{0}={1}&{2}={3}", PostFields.AppId, AppId, PostFields.Display, "page")*/, UriKind.RelativeOrAbsolute);
 
             var result = await NavigateToFeedDialogAsync(feedDialogUrl);
 
@@ -389,6 +398,7 @@ namespace FacebookSDK
             }
 
             string fieldsValue = string.Empty;
+
             foreach (var item in parameters)
             {
                 fieldsValue += string.Format("{0},", item);
@@ -396,7 +406,6 @@ namespace FacebookSDK
 
             try
             {
-                FBUser fbUser = new FBUser();
                 object userInfo;
 
                 if (string.IsNullOrEmpty(fieldsValue))
@@ -404,8 +413,8 @@ namespace FacebookSDK
                 else
                     userInfo = await facebookClient.GetTaskAsync(string.Format("/{0}", FacebookCommand.Me), new { access_token = AccessTokenData.AccessToken, fields = fieldsValue });
 
-                fbUser = JsonConvert.DeserializeObject<FBUser>(userInfo.ToString());
-                fbUser.ProfilePicture.PictureData.Url = new Uri("https://graph.facebook.com/me/picture?width=100&amp;height=100&amp;access_token=" + AccessTokenData.AccessToken, UriKind.RelativeOrAbsolute);
+                var fbUser = JsonConvert.DeserializeObject<FBUser>(userInfo.ToString());
+                fbUser.ProfilePicture.PictureData.Url = new Uri(String.Format("http://graph.facebook.com/{0}/picture?type=large", fbUser.Id), UriKind.RelativeOrAbsolute);
                 return fbUser;
             }
             catch (Exception ex)
@@ -414,7 +423,7 @@ namespace FacebookSDK
                 return null;
             }
         }
-        
+
         public async Task<FBFriends> GetUserFriends()
         {
             while (AccessTokenData == null || string.IsNullOrEmpty(AccessTokenData.AccessToken))
@@ -442,7 +451,7 @@ namespace FacebookSDK
         public bool BackButtonHandler()
         {
             //Nếu FacebookSDK vẫn đang hiển thị
-            if (popup.IsOpen == true)
+            if (popup.IsOpen)
             {
                 ForceClose();
                 return true;
@@ -661,12 +670,20 @@ namespace FacebookSDK
             webView.WebBrowser.Navigate(loginDialogUrl);
 
             var result = await webView.WebBrowser.LoginCompleted(AppId, ExtendedPermissions);
-            if (result.IsSuccess)
+            if (result != null && result.IsSuccess)
             {
-                AccessTokenData = result.AccessTokenData;
-                var user = await GetUserProfile();
-                AccessTokenData.FacebookId = user.Id;
-                result.UserInfo = user;
+                if (AccessTokenData != null)
+                {
+                    AccessTokenData = result.AccessTokenData;
+
+                    var user = await GetUserProfile();
+
+                    if (user != null)
+                    {
+                        AccessTokenData.FacebookId = user.Id;
+                        result.UserInfo = user;
+                    }
+                }
             }
             return result;
         }

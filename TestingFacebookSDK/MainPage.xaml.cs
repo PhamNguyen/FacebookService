@@ -25,7 +25,7 @@ namespace TestingFacebookSDK
             InitializeComponent();
             cookies = new CookieCollection();
             web2.LoadCompleted += Web2_LoadCompleted;
-            FacebookService.Instance.AppId = "981905581855079";
+            FacebookService.Instance.AppId = "282140562117538";
             FacebookService.Instance.ExtendedPermissions = "publish_actions, publish_stream, user_about_me, manage_pages, user_birthday, user_friends, user_status, user_likes, user_location, user_posts";
             FacebookService.Instance.IsPopup = true;
             FacebookService.Instance.Closed += Instance_Closed;

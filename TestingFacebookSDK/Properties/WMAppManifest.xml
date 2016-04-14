@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Deployment xmlns="http://schemas.microsoft.com/windowsphone/2012/deployment" AppPlatformVersion="8.0">
   <DefaultLanguage xmlns="" code="en-US" />
-  <App xmlns="" ProductID="{1b771cca-7a14-44cf-a1ae-0d000b779566}" Title="TestingFacebookSDK" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal" Author="TestingFacebookSDK author" Description="Sample description" Publisher="TestingFacebookSDK" PublisherID="{2d688dae-c293-4df4-86a2-959a10af7ad9}">
+  <App xmlns="" ProductID="{1b771cca-7a14-44cf-a1ae-0d000b779566}" Title="#TestingFacebookSDK" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal" Author="TestingFacebookSDK author" Description="Sample description" Publisher="TestingFacebookSDK" PublisherID="{2d688dae-c293-4df4-86a2-959a10af7ad9}">
     <IconPath IsRelative="true" IsResource="false">Assets\ApplicationIcon.png</IconPath>
     <Capabilities>
       <Capability Name="ID_CAP_MEDIALIB_AUDIO" />

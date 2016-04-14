@@ -14,11 +14,11 @@ namespace FacebookSDK.Helpers
         }
         public static string RedirectUriFeed
         {
-            get { return "https://m.facebook.com/v2.0/dialog/app_requests/submit"; }
+            get { return "https://m.facebook.com/?post_id="; }// "https://m.facebook.com/v2.0/dialog/app_requests/submit"; }//https://m.facebook.com/v2.0/dialog/app_requests/submit
         }
         public static string RedirectUriAppRequest
         {
-            get { return "https://m.facebook.com"; }
+            get { return "https://m.facebook.com/"; }
         }
 
         public static string RedirectUriRequestError

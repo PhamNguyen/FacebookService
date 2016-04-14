@@ -189,7 +189,7 @@
             string facebookUserId = string.Empty;//chỗ này fb có trả về userId nên cứ lấy ra để đây cũng được
 
             string result = HttpUtility.HtmlDecode(e.Uri.ToString());
-            result = result.Remove(result.IndexOf(e.Uri.Fragment)).Remove(0, Constants.RedirectUriFeed.Length);
+            result = result.Remove(result.IndexOf(e.Uri.Fragment)).Remove(0, Constants.RedirectUriAppRequest.Length);
             if (!string.IsNullOrEmpty(result) && result.Contains("?"))
                 result = result.Remove(result.IndexOf('?'), 1);
             foreach (string item in result.Split('&'))
