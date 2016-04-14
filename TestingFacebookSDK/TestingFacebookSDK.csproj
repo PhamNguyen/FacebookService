@@ -167,6 +167,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Facebook, Version=6.0.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Facebook.7.0.6\lib\wp8\Facebook.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="MoboAds, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\BigCoin.WP\Ads\MoboAdsRelease-v2\Release\WindowsPhone\MoboAds\MoboAds.dll</HintPath>

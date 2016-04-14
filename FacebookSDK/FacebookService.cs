@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.IsolatedStorage;
-using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -254,16 +253,7 @@ namespace FacebookSDK
             feedParams.Add(PostFields.Display, "touch");
 
             var feedDialogUrl = facebookClient.GetDialogUrl(FacebookCommand.Feed, feedParams);
-
-            string url = "https://www.facebook.com/dialog/feed?";
-
-            foreach (var item in feedParams)
-            {
-                url += string.Format("{0}={1}", item.Key, item.Value);
-            }
-
-            //Uri feedDialogUrl = new Uri(url/*string.Format("https://www.facebook.com/dialog/feed?{0}={1}&{2}={3}", PostFields.AppId, AppId, PostFields.Display, "page")*/, UriKind.RelativeOrAbsolute);
-
+                        
             var result = await NavigateToFeedDialogAsync(feedDialogUrl);
 
             return result;
