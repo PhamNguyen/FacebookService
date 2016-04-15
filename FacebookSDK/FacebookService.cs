@@ -35,7 +35,7 @@ namespace FacebookSDK
 
         private bool isLoginInProgress = false;
 
-        private DispatcherTimer _webBrowserNavigatedTimer;
+        private DispatcherTimer webBrowserNavigatedTimer;
 
         private const int WebBrowserNavigatedTimeOut = 5;
 
@@ -165,17 +165,11 @@ namespace FacebookSDK
             IsPopup = true;
             popup = new Popup();
 
-            _webBrowserNavigatedTimer = new DispatcherTimer
+            webBrowserNavigatedTimer = new DispatcherTimer
             {
                 Interval = new TimeSpan(0, 0, WebBrowserNavigatedTimeOut)
             };
-            _webBrowserNavigatedTimer.Tick += WebBrowserNavigatedTimerTick;
-        }
-
-        private void WebBrowserNavigatedTimerTick(object sender, EventArgs e)
-        {
-            ShowLoading(false);
-            _webBrowserNavigatedTimer.Stop();
+            webBrowserNavigatedTimer.Tick += WebBrowserNavigatedTimerTick;
         }
         #endregion
 
@@ -253,7 +247,7 @@ namespace FacebookSDK
             feedParams.Add(PostFields.Display, "touch");
 
             var feedDialogUrl = facebookClient.GetDialogUrl(FacebookCommand.Feed, feedParams);
-                        
+
             var result = await NavigateToFeedDialogAsync(feedDialogUrl);
 
             return result;
@@ -452,6 +446,12 @@ namespace FacebookSDK
 
         #region Private Methods
 
+        private void WebBrowserNavigatedTimerTick(object sender, EventArgs e)
+        {
+            ShowLoading(false);
+            webBrowserNavigatedTimer.Stop();
+        }
+
         private Uri GetDialogUrl(string dialog, Dictionary<string, object> parameters)
         {
             StringBuilder requestUrlBuilder = new StringBuilder();
@@ -499,7 +499,7 @@ namespace FacebookSDK
         {
             webView.ShowLoading(isShow, contentLoading);
             if (isShow)
-                _webBrowserNavigatedTimer.Start();
+                webBrowserNavigatedTimer.Start();
         }
 
         private void WebView_NavigationFailed(object sender, System.Windows.Navigation.NavigationFailedEventArgs e)
@@ -621,6 +621,19 @@ namespace FacebookSDK
         private void ForceClose()
         {
             NavigateToHide();
+            switch (WebBrowserExtensionMethods.CurrentState)
+            {
+                case WebBrowserExtensionMethods.FacebookSDKState.Login:
+                    webView.WebBrowser.CancelLoginFacebook();
+                    break;
+                case WebBrowserExtensionMethods.FacebookSDKState.FeedDialog:
+                    webView.WebBrowser.CancelFeedFacebook();
+                    break;
+                case WebBrowserExtensionMethods.FacebookSDKState.AppRequestDialog:
+                    webView.WebBrowser.CancelAppRequestFacebook();
+                    break;
+            }
+
             if (Closed != null)
                 Closed(this, new EventArgs());
         }
@@ -657,9 +670,7 @@ namespace FacebookSDK
             //isSetCookie = false;
             //webView.WebBrowser.Navigate(new Uri("https://m.facebook.com", UriKind.RelativeOrAbsolute));
 
-            webView.WebBrowser.Navigate(loginDialogUrl);
-
-            var result = await webView.WebBrowser.LoginCompleted(AppId, ExtendedPermissions);
+            var result = await webView.WebBrowser.LoginFacebookAsync(loginDialogUrl, AppId, ExtendedPermissions);
             if (result != null && result.IsSuccess)
             {
                 if (AccessTokenData != null)
@@ -686,8 +697,7 @@ namespace FacebookSDK
             //isSetCookie = false;
             //webView.WebBrowser.Navigate(new Uri("https://m.facebook.com", UriKind.RelativeOrAbsolute));
 
-            webView.WebBrowser.Navigate(appRequestDialogUrl);
-            var result = await webView.WebBrowser.AppRequestCompleted();
+            var result = await webView.WebBrowser.AppRequestFacebookAsync(appRequestDialogUrl);
 
             return result;
         }
@@ -699,8 +709,8 @@ namespace FacebookSDK
             //UrlNavigation = feedDialogUrl;
             //isSetCookie = false;
             //webView.WebBrowser.Navigate(new Uri("https://m.facebook.com", UriKind.RelativeOrAbsolute));
-            webView.WebBrowser.Navigate(feedDialogUrl);
-            var result = await webView.WebBrowser.FeedCompleted();
+
+            var result = await webView.WebBrowser.FeedFacebookAsync(feedDialogUrl);
 
             return result;
         }

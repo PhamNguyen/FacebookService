@@ -9,29 +9,50 @@
 
     public static class WebBrowserExtensionMethods
     {
-        private static FacebookSDKState currentState;
-        
-        public static Task<NavigationEventArgs> WebBrowerNavigated(this WebBrowser browser)
+        public static FacebookSDKState CurrentState { get; private set; }
+        private static TaskCompletionSource<NavigationEventArgs> navigatedTaskCompletionSource;
+        private static TaskCompletionSource<LoginCompletedArgs> loginTaskCompletionSource;
+        private static TaskCompletionSource<FeedCompletedArgs> feedTaskCompletionSource;
+        private static TaskCompletionSource<AppRequestsCompletedArgs> appRequestTaskCompletionSource;
+        private static EventHandler<NavigationEventArgs> onLoginCompleted;
+        private static NavigationFailedEventHandler onLoginFailed;
+        private static EventHandler<NavigationEventArgs> onFeedCompleted;
+        private static NavigationFailedEventHandler onFeedFailed;
+        private static EventHandler<NavigationEventArgs> onRequestCompleted;
+        private static NavigationFailedEventHandler onRequestFailed;
+
+        public static Task<NavigationEventArgs> NavigateAsync(this WebBrowser browser, Uri uri)
         {
-            var tcs = new TaskCompletionSource<NavigationEventArgs>();
+            navigatedTaskCompletionSource = new TaskCompletionSource<NavigationEventArgs>();
 
             EventHandler<NavigationEventArgs> onNavigated = null;
             onNavigated = (object sender, NavigationEventArgs e) =>
             {
                 browser.Navigated -= onNavigated;
-                tcs.SetResult(e);
+                navigatedTaskCompletionSource.SetResult(e);
             };
             browser.Navigated += onNavigated;
-            return tcs.Task;
+
+            browser.Navigate(uri);
+
+            return navigatedTaskCompletionSource.Task;
         }
 
-        public static Task<LoginCompletedArgs> LoginCompleted(this WebBrowser browser, string fbAppId, string extendedPermissions)
+        public static void CancelLoginFacebook(this WebBrowser browser)
         {
-            currentState = FacebookSDKState.Login;
+            browser.Navigated -= onLoginCompleted;
+            browser.NavigationFailed -= onLoginFailed;
+            if (loginTaskCompletionSource != null)
+                loginTaskCompletionSource.TrySetResult(new LoginCompletedArgs(false));
+        }
 
-            var tcs = new TaskCompletionSource<LoginCompletedArgs>();
+        public static Task<LoginCompletedArgs> LoginFacebookAsync(this WebBrowser browser, Uri uri, string fbAppId, string extendedPermissions)
+        {
+            CurrentState = FacebookSDKState.Login;
 
-            EventHandler<NavigationEventArgs> onLoginCompleted = null;
+            loginTaskCompletionSource = new TaskCompletionSource<LoginCompletedArgs>();
+
+            onLoginCompleted = null;
             onLoginCompleted = (object sender, NavigationEventArgs e) =>
             {
                 LoginCompletedArgs result;
@@ -39,30 +60,40 @@
                 if (result != null)
                 {
                     browser.Navigated -= onLoginCompleted;
-                    tcs.SetResult(result);
+                    loginTaskCompletionSource.SetResult(result);
                 }
             };
 
-            NavigationFailedEventHandler onLoginFailed = null;
+            onLoginFailed = null;
             onLoginFailed = (object sender, NavigationFailedEventArgs e) =>
             {
                 browser.NavigationFailed -= onLoginFailed;
-                tcs.SetResult(new LoginCompletedArgs(false));
+                loginTaskCompletionSource.SetResult(new LoginCompletedArgs(false));
             };
 
             browser.Navigated += onLoginCompleted;
             browser.NavigationFailed += onLoginFailed;
 
-            return tcs.Task;
+            browser.Navigate(uri);
+
+            return loginTaskCompletionSource.Task;
         }
 
-        public static Task<FeedCompletedArgs> FeedCompleted(this WebBrowser browser)
+        public static void CancelFeedFacebook(this WebBrowser browser)
         {
-            currentState = FacebookSDKState.FeedDialog;
+            browser.Navigated -= onFeedCompleted;
+            browser.NavigationFailed -= onFeedFailed;
+            if (feedTaskCompletionSource != null)
+                feedTaskCompletionSource.TrySetResult(new FeedCompletedArgs(false));
+        }
 
-            var tcs = new TaskCompletionSource<FeedCompletedArgs>();
+        public static Task<FeedCompletedArgs> FeedFacebookAsync(this WebBrowser browser, Uri uri)
+        {
+            CurrentState = FacebookSDKState.FeedDialog;
 
-            EventHandler<NavigationEventArgs> onFeedCompleted = null;
+            feedTaskCompletionSource = new TaskCompletionSource<FeedCompletedArgs>();
+
+            onFeedCompleted = null;
             onFeedCompleted = (object sender, NavigationEventArgs e) =>
             {
                 FeedCompletedArgs result;
@@ -70,29 +101,40 @@
                 if (result != null)
                 {
                     browser.Navigated -= onFeedCompleted;
-                    tcs.SetResult(result);
+                    feedTaskCompletionSource.SetResult(result);
                 }
             };
 
-            NavigationFailedEventHandler onFeedFailed = null;
+            onFeedFailed = null;
             onFeedFailed = (object sender, NavigationFailedEventArgs e) =>
             {
                 browser.NavigationFailed -= onFeedFailed;
-                tcs.SetResult(new FeedCompletedArgs(false));
+                feedTaskCompletionSource.SetResult(new FeedCompletedArgs(false));
             };
 
             browser.Navigated += onFeedCompleted;
             browser.NavigationFailed += onFeedFailed;
-            return tcs.Task;
+
+            browser.Navigate(uri);
+
+            return feedTaskCompletionSource.Task;
         }
 
-        public static Task<AppRequestsCompletedArgs> AppRequestCompleted(this WebBrowser browser)
+        public static void CancelAppRequestFacebook(this WebBrowser browser)
         {
-            currentState = FacebookSDKState.AppRequestDialog;
+            browser.Navigated -= onFeedCompleted;
+            browser.NavigationFailed -= onFeedFailed;
+            if (appRequestTaskCompletionSource != null)
+                appRequestTaskCompletionSource.TrySetResult(new AppRequestsCompletedArgs(false));
+        }
 
-            var tcs = new TaskCompletionSource<AppRequestsCompletedArgs>();
+        public static Task<AppRequestsCompletedArgs> AppRequestFacebookAsync(this WebBrowser browser, Uri uri)
+        {
+            CurrentState = FacebookSDKState.AppRequestDialog;
 
-            EventHandler<NavigationEventArgs> onRequestCompleted = null;
+            appRequestTaskCompletionSource = new TaskCompletionSource<AppRequestsCompletedArgs>();
+
+            onRequestCompleted = null;
             onRequestCompleted = (object sender, NavigationEventArgs e) =>
             {
                 AppRequestsCompletedArgs result;
@@ -100,27 +142,29 @@
                 if (result != null)
                 {
                     browser.Navigated -= onRequestCompleted;
-                    tcs.SetResult(result);
+                    appRequestTaskCompletionSource.SetResult(result);
                 }
             };
 
-            NavigationFailedEventHandler onRequestFailed = null;
+            onRequestFailed = null;
             onRequestFailed = (object sender, NavigationFailedEventArgs e) =>
             {
                 browser.NavigationFailed -= onRequestFailed;
-                tcs.SetResult(new AppRequestsCompletedArgs(false));
+                appRequestTaskCompletionSource.SetResult(new AppRequestsCompletedArgs(false));
             };
 
             browser.Navigated += onRequestCompleted;
             browser.NavigationFailed += onRequestFailed;
 
-            return tcs.Task;
+            browser.Navigate(uri);
+
+            return appRequestTaskCompletionSource.Task;
         }
 
         #region Private Methods
         private static void LoginNavigationCallBack(NavigationEventArgs e, string fbAppId, string extendedPermissions, out LoginCompletedArgs loginResult)
         {
-            if (currentState == FacebookSDKState.Login)
+            if (CurrentState == FacebookSDKState.Login)
                 loginResult = RetrieveLoginResponse(e, fbAppId, extendedPermissions);
             else
                 loginResult = null;
@@ -128,7 +172,7 @@
 
         private static void FeedNavigationCallBack(NavigationEventArgs e, out FeedCompletedArgs feedResult)
         {
-            if (currentState == FacebookSDKState.FeedDialog)
+            if (CurrentState == FacebookSDKState.FeedDialog)
                 feedResult = RetrieveFeedResponse(e);
             else
                 feedResult = null;
@@ -136,7 +180,7 @@
 
         private static void RequestNavigationCallBack(NavigationEventArgs e, out AppRequestsCompletedArgs requestResult)
         {
-            if (currentState == FacebookSDKState.AppRequestDialog)
+            if (CurrentState == FacebookSDKState.AppRequestDialog)
                 requestResult = RetrieveAppRequestResponse(e);
             else
                 requestResult = null;
@@ -231,7 +275,7 @@
             return new AppRequestsCompletedArgs(isRequestSuccessful);
         }
         #endregion
-        private enum FacebookSDKState
+        public enum FacebookSDKState
         {
             Login,
             Logout,
